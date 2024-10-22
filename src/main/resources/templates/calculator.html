@@ -18,10 +18,20 @@
     </header>
     <main>
         <div class="container">
-            <div class="alert alert-primary mt-3" role="alert" >
-               <span th:text="${num1} + ${op} + ${num2} + ' = '"/>
-               <b th:text="${result}"/>
+            <div class="alert alert-primary mt-3" role="alert" th:if="${isCorrect}">
+                <span th:text="${num1} + ${op} + ${num2} + ' = '" />
+                <b th:text="${result}" />
             </div>
+            <div class="alert alert-danger mt-3" role="alert" th:if="${!isCorrect}">
+                <strong>Error on expression</strong> <span th:text="${eval}"></span>
+            </div>
+
+            <h4>History</h4>
+            <ul class="list-group list-group" th:each="item : ${history}">
+                <li class="list-group-item" th:text="${item}" />
+                
+            </ul>
+            
         </div>
     </main>
     <footer>

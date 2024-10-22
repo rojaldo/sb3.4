@@ -15,13 +15,26 @@ public class CalculatorController {
 
     @GetMapping("/calculator")
     public String calculator(@Valid CalculatorDto calculatorDto, Model view) {
+        if (calculatorDto.getEval() != null) {
+            this.calculatorService.processExpression(calculatorDto.getEval());
+            view.addAttribute("num1", calculatorService.getNum1());
+            view.addAttribute("num2", calculatorService.getNum2());
+            view.addAttribute("op", calculatorService.getOp());
+            view.addAttribute("result", calculatorService.getResult());
+            view.addAttribute("isCorrect", calculatorService.isValid());
+            view.addAttribute("eval", calculatorDto.getEval());
 
-        float result = calculatorService.calculate(calculatorDto.getNum1(), calculatorDto.getNum2(), calculatorDto.getOp());
+        }else {
+            float result = calculatorService.calculate(calculatorDto.getNum1(), calculatorDto.getNum2(), calculatorDto.getOp());
+            view.addAttribute("num1", calculatorDto.getNum1());
+            view.addAttribute("num2", calculatorDto.getNum2());
+            view.addAttribute("op", calculatorDto.getOp());
+            view.addAttribute("result", result);
+        }
 
-        view.addAttribute("num1", calculatorDto.getNum1());
-        view.addAttribute("num2", calculatorDto.getNum2());
-        view.addAttribute("op", calculatorDto.getOp());
-        view.addAttribute("result", result);
+        view.addAttribute("history", calculatorService.getHistory());
+
+
         return "calculator";
     }
 

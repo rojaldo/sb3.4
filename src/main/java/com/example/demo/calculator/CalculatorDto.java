@@ -22,4 +22,8 @@ public class CalculatorDto {
     @Pattern(regexp = "[+\\-*/]")
     private String op;
 
+    // a regex that allows an arithmetic expression xx[op]yy= (no decimals)
+    // @Pattern(regexp = "[0-9]+[-+*/][0-9]+=")
+    private String eval;
+
 }
