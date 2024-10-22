@@ -30,6 +30,8 @@ public class CalculatorController {
             view.addAttribute("num2", calculatorDto.getNum2());
             view.addAttribute("op", calculatorDto.getOp());
             view.addAttribute("result", result);
+            view.addAttribute("isCorrect", true);
+            view.addAttribute("eval", "");
         }
 
         view.addAttribute("history", calculatorService.getHistory());
