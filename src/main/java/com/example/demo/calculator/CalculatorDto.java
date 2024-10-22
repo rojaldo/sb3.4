@@ -10,8 +10,7 @@ import lombok.Setter;
 
 @Getter
 @Setter
-public class CalculatorDto {
-
+public class CalculatorDto implements ICalculatorResponse {
     @Min(-1000)
     @Max(1000)
     private float num1;
@@ -25,5 +24,7 @@ public class CalculatorDto {
     // a regex that allows an arithmetic expression xx[op]yy= (no decimals)
     // @Pattern(regexp = "[0-9]+[-+*/][0-9]+=")
     private String eval;
+
+    private float result;
 
 }
