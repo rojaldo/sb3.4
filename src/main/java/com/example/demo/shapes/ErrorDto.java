@@ -5,7 +5,7 @@ import lombok.Data;
 
 @Data
 @Builder
-public class ErrorDto implements IResponseCircle {
+public class ErrorDto implements IResponseCircle, IResponseRectangle {
         
         private String message;
         private int status;

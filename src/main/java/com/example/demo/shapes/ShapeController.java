@@ -14,10 +14,10 @@ import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
 @RequestMapping("/api/v1")
-public class AreaController {
+public class ShapeController {
 
     @Autowired
-    AreaService areaService;
+    ShapeService areaService;
 
     @GetMapping("/circle")
     public ResponseEntity<IResponseCircle> getMethodName(
@@ -39,6 +39,30 @@ public class AreaController {
                     .radius(radius)
                     .area(areaService.calculateCircleArea(radius))
                     .perimeter(areaService.calculateCirclePerimeter(radius))
+                .build());
+    }
+
+    @GetMapping("/rectangle")
+    public ResponseEntity<IResponseRectangle> getMethodName(
+            @RequestParam(name = "w", required = false, defaultValue = "3.0") float width,
+            @RequestParam(name = "h", required = false, defaultValue = "4.0") float height) {
+                if (width < 0 || height < 0) {
+                    return ResponseEntity
+                        .status(HttpStatus.BAD_REQUEST)
+                        .body(ErrorDto.builder()
+                            .message("Width and Height must be greater than 0")
+                            .status(HttpStatus.BAD_REQUEST.value())
+                            .details("The width provided was " + width + " and the height provided was " + height)
+                            .build());
+                }
+
+        return ResponseEntity
+                .status(HttpStatus.OK)
+                .body(RectangleDto.builder()
+                    .width(width)
+                    .height(height)
+                    .area(areaService.calculateRectangleArea(width, height))
+                    .perimeter(areaService.calculateRectanglePerimeter(width, height))
                 .build());
     }
 
