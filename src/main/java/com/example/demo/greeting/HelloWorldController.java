@@ -1,4 +1,4 @@
-package com.example.demo;
+package com.example.demo.greeting;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -17,6 +17,5 @@ public class HelloWorldController {
         view.addAttribute("my_msg", message);
         return "hello";
     }
-
     
 }
