@@ -20,7 +20,7 @@ public class UserDto implements IUsersResponse {
     private String email;
 
     @Positive
-    private int age;
+    private Integer age;
 
     
 }

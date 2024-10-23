@@ -9,6 +9,7 @@ import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -73,6 +74,30 @@ public class UsersRestController {
         status(HttpStatus.OK).
         body(user);
 
+    }
+
+    @PatchMapping("users/{id}")
+    public ResponseEntity<IUsersResponse> patchMethodName(@PathVariable long id, @RequestBody @Validated UserDto userDto) {
+        // if id<0 return not found
+        if (id < 0) {
+            return ResponseEntity.
+            status(HttpStatus.NOT_FOUND).
+            body(UserErrorDto.builder().message("User not found").details( "The id provided was: " + id).build());
+        }
+        
+        //check if is UserErrorDto
+        IUsersResponse user = usersService.patchUser(id, userDto);
+        if (user instanceof UserErrorDto) {
+            // add details to UserErrorDto
+            UserErrorDto userError = (UserErrorDto) user;
+            return ResponseEntity.
+            status(userError.getStatus()).
+            body(user);
+        }
+
+        return ResponseEntity.
+        status(HttpStatus.OK).
+        body(user);
     }
 
     @DeleteMapping("users/{id}")

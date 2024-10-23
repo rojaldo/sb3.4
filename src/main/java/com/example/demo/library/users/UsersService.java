@@ -56,6 +56,38 @@ public class UsersService {
         return userEntityDto(savedUserEntity);
     }
 
+    IUsersResponse patchUser(long id, UserDto userDto) {
+        Optional<UserEntity> userEntityById = libraryUsersRepository.findById(id);
+        if (!userEntityById.isPresent()) {
+            return UserErrorDto.builder()
+                    .message("User not found")
+                    .details("The id provided was: " + id)
+                    .status(404)
+                    .build();
+        }
+        UserEntity userEntity = userEntityById.get();
+        if (userDto.getName() != null) {
+            userEntity.setName(userDto.getName());
+        }
+        if (userDto.getEmail() != null) {
+            // check if email already exists in another user
+            Optional<UserEntity> userEntityByEmail = libraryUsersRepository.findByEmail(userDto.getEmail());
+            if (userEntityByEmail.isPresent() && userEntityByEmail.get().getId() != id) {
+                return UserErrorDto.builder()
+                        .message("Email already exists")
+                        .details("The email provided was: " + userDto.getEmail())
+                        .status(400)
+                        .build();
+            }
+            userEntity.setEmail(userDto.getEmail());
+        }
+        if (userDto.getAge() != null) {
+            userEntity.setAge(userDto.getAge());
+        }
+        UserEntity savedUserEntity = libraryUsersRepository.save(userEntity);
+        return userEntityDto(savedUserEntity);
+    }
+
     IUsersResponse deleteUser(long id) {
         Optional<UserEntity> userEntityById = libraryUsersRepository.findById(id);
         if (!userEntityById.isPresent()) {
