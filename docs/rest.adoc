@@ -1,0 +1,909 @@
+= Curso de Introducción a REST
+:toc:
+:toclevels: 3
+:source-highlighter: highlight.js
+
+== 1. Introducción a REST
+=== 1.1 Qué es REST
+El término REST (Representational State Transfer) se refiere a un estilo arquitectónico que se utiliza para diseñar servicios web. REST se basa en la interacción entre los componentes de una red, utilizando recursos y representaciones de dichos recursos, y se apoya en el protocolo HTTP para la comunicación.
+
+=== 1.2 Historia y evolución de REST
+REST fue introducido por Roy Fielding en su tesis doctoral en el año 2000. A lo largo de los años, REST ha ganado popularidad debido a su simplicidad y capacidad de adaptarse bien a la web, ya que aprovecha la infraestructura de HTTP.
+
+=== 1.3 Comparación con otros estilos de arquitectura (SOAP, RPC)
+A diferencia de SOAP (Simple Object Access Protocol), que es más complejo y requiere un formato de mensaje específico como XML, REST es más flexible en términos de formatos de datos (JSON, XML, etc.). RPC (Remote Procedure Call) se basa en la idea de ejecutar funciones de forma remota, mientras que REST se centra en la manipulación de recursos representados en la web.
+
+=== 1.4 Componentes fundamentales de REST
+==== 1.4.1 Recursos
+En REST, los recursos son cualquier tipo de información que se pueda representar. Un recurso puede ser un objeto, un archivo, o cualquier otra entidad identificada por una URL única.
+
+==== 1.4.2 Representaciones
+Una representación es la forma en que un recurso se transmite entre el servidor y el cliente. Las representaciones suelen estar en formatos como JSON, XML o HTML.
+
+==== 1.4.3 Estados de la aplicación
+El estado de la aplicación en REST es transferido mediante interacciones cliente-servidor. A medida que el cliente realiza solicitudes, la representación del recurso puede cambiar, lo que refleja el "estado" actual de la aplicación.
+
+
+== 2. Principios de REST
+Los principios de REST proporcionan una base para crear aplicaciones escalables, simples y eficientes, aprovechando las propiedades fundamentales del protocolo HTTP.
+
+=== 2.1 Cliente-Servidor
+Este principio separa la interfaz del cliente y el almacenamiento de datos del servidor. De esta manera, los clientes pueden evolucionar independientemente de los servidores y viceversa. El cliente solicita recursos, mientras que el servidor los provee, manteniendo una clara distinción entre ambos roles.
+
+=== 2.2 Stateless (Sin estado)
+REST es sin estado, lo que significa que cada solicitud del cliente al servidor debe contener toda la información necesaria para que el servidor entienda y procese la solicitud. El servidor no debe almacenar ninguna información de la sesión del cliente. Esto mejora la escalabilidad ya que no hay dependencia de sesiones en el servidor.
+
+=== 2.3 Cacheabilidad
+Las respuestas de los servidores deben ser explícitamente cacheables o no cacheables. Si una respuesta es cacheable, el cliente puede reutilizarla en futuras solicitudes, lo que mejora el rendimiento al reducir la cantidad de interacciones entre cliente y servidor.
+
+=== 2.4 Interfaz uniforme
+Una interfaz uniforme permite que las interacciones entre clientes y servidores sean predecibles y eficientes. Los principales elementos de esta interfaz son:
+  - Identificación de recursos a través de URLs.
+  - Manipulación de recursos a través de representaciones.
+  - Uso de métodos HTTP estandarizados (GET, POST, PUT, DELETE).
+  - Autodescripción de mensajes (códigos de estado, encabezados HTTP).
+
+=== 2.5 Sistema en capas
+Un sistema RESTful puede ser diseñado en capas, donde los componentes no pueden interactuar más allá de la capa inmediatamente adyacente. Esto permite que el cliente no sepa si está conectado directamente al servidor o a un intermediario (como un proxy o un balanceador de carga), lo que facilita la escalabilidad y flexibilidad del sistema.
+
+=== 2.6 Código bajo demanda (opcional)
+Este principio permite que un servidor proporcione código ejecutable al cliente (por ejemplo, scripts JavaScript) como parte de la respuesta. Aunque no es un principio obligatorio, puede aumentar la flexibilidad de las aplicaciones, aunque al mismo tiempo reduce la visibilidad, por lo que se utiliza con moderación.
+
+== 3. Estructura de URLs RESTful
+La estructura de las URLs en APIs RESTful es crucial para una interacción intuitiva y eficiente con los recursos. Una buena práctica en el diseño de URLs mejora la usabilidad y la claridad del API.
+
+=== 3.1 Diseño de URIs
+.Las URIs (Identificadores Uniformes de Recursos) deben ser claras y descriptivas. Algunos principios clave para el diseño de URIs incluyen:
+  - **Sustantivos en lugar de verbos**: Usa sustantivos para representar recursos (ej. `/usuarios` en lugar de `/obtenerUsuarios`).
+  - **Uso de plural**: Es común utilizar el plural para los nombres de recursos (ej. `/productos`).
+  - **Jerarquía lógica**: Refleja la jerarquía de los recursos en la estructura de la URL (ej. `/usuarios/{id}/pedidos`).
+  - **Evitar caracteres innecesarios**: Mantén las URLs limpias, evitando caracteres especiales y confusos.
+
+=== 3.2 Buenas prácticas en la estructura de URLs
+.Algunas buenas prácticas incluyen:
+  - **Consistencia**: Mantén un formato consistente para todas las URLs.
+  - **Uso de parámetros de consulta**: Para filtrar o buscar, utiliza parámetros de consulta (ej. `/productos?categoria=ropa`).
+  - **Limitar la longitud**: Evita URLs excesivamente largas, ya que pueden ser difíciles de manejar y compartir.
+  - **Semántica**: Las URLs deben ser autoexplicativas, facilitando a los desarrolladores entender la funcionalidad sin necesidad de documentación adicional.
+
+=== 3.3 Versionado de APIs en REST
+.El versionado de una API es importante para garantizar la compatibilidad a largo plazo. Algunas estrategias para versionar APIs incluyen:
+  - **Versionado en la URL**: Incluye la versión en la URL, como en `/v1/usuarios`.
+  - **Versionado en los encabezados**: Permite especificar la versión mediante un encabezado HTTP (ej. `Accept: application/vnd.miapi.v1+json`).
+  - **Versionado en los parámetros de consulta**: Incluye la versión como un parámetro de consulta (ej. `/usuarios?version=1`).
+  - **Consideraciones**: Al versionar, es esencial comunicar los cambios y garantizar que los clientes antiguos sigan funcionando sin interrupciones.
+
+== 4. Métodos HTTP y REST
+
+Los métodos HTTP son comandos que permiten la interacción con recursos en un servidor. En el contexto de una API REST, cada método tiene un propósito específico relacionado con el ciclo de vida del recurso.
+
+=== 4.1 GET: Recuperar información
+Este método se utiliza para solicitar la representación de un recurso. No debe tener efectos secundarios, lo que significa que no debería alterar el estado del recurso en el servidor.
+
+[source, text]
+----
+GET /api/usuarios/123
+----
+
+*Respuesta:* Una lista o un solo recurso en formato JSON, XML, o similar.
+
+=== 4.2 POST: Enviar datos
+El método POST se usa para enviar datos al servidor, usualmente para crear un nuevo recurso. El cuerpo de la solicitud suele incluir los datos necesarios para crear dicho recurso.
+
+[source, text]
+----
+POST /api/usuarios
+Body: { "nombre": "Juan", "email": "juan@example.com" }
+----
+
+*Respuesta:* El recurso recién creado, usualmente acompañado de un código de estado 201 (Created).
+
+=== 4.3 PUT: Actualizar recursos
+PUT se usa para actualizar un recurso existente o crear uno si no existe. A diferencia de POST, el cuerpo de la solicitud debe incluir toda la representación del recurso.
+
+[source, text]
+----
+PUT /api/usuarios/123
+Body: { "nombre": "Juan", "email": "juan_nuevo@example.com" }
+----
+
+*Respuesta:* El recurso actualizado.
+
+=== 4.4 DELETE: Eliminar recursos
+El método DELETE se utiliza para eliminar un recurso especificado por la URL.
+
+[source, text]
+----
+DELETE /api/usuarios/123
+----
+
+*Respuesta:* Usualmente un código de estado 204 (No Content) si la eliminación es exitosa.
+
+=== 4.5 Otros métodos (HEAD, PATCH, OPTIONS)
+- `HEAD`: Similar a GET pero sin el cuerpo de la respuesta. Se utiliza para verificar la existencia de un recurso o la validez de una URL.
+- `PATCH`: Se usa para realizar actualizaciones parciales a un recurso.
+- `OPTIONS`: Devuelve los métodos HTTP permitidos para el recurso solicitado.
+
+[source, text]
+----
+HEAD /api/usuarios/123  -> Verifica si el usuario existe.
+PATCH /api/usuarios/123 -> Actualiza solo un campo del recurso.
+OPTIONS /api/usuarios   -> Muestra los métodos permitidos.
+----
+
+== 5. Tipos de Datos en REST
+
+Cuando una API REST responde a una solicitud, lo hace en uno de varios formatos que permiten la interpretación de los datos. Estos formatos deben ser comprensibles tanto por el servidor como por el cliente.
+
+=== 5.1 Formatos de respuesta comunes
+
+La API REST puede devolver diferentes formatos de datos según lo que el cliente soporte o solicite.
+
+==== 5.1.1 JSON
+
+JSON (JavaScript Object Notation) es el formato más utilizado debido a su simplicidad y compatibilidad con múltiples lenguajes de programación.
+
+[source, text]
+----
+{
+  "id": 123,
+  "nombre": "Juan",
+  "email": "juan@example.com"
+}
+----
+
+==== 5.1.2 XML
+
+XML (Extensible Markup Language) es un formato más verboso que JSON, pero ofrece más control sobre la estructura de los datos. Se usa en sistemas más antiguos o en aquellos que requieren una mayor formalidad en el esquema.
+
+[source, text]
+----
+<usuario>
+  <id>123</id>
+  <nombre>Juan</nombre>
+  <email>juan@example.com</email>
+</usuario>
+----
+
+==== 5.1.3 YAML
+
+YAML (YAML Ain't Markup Language) es un formato legible por humanos, similar a JSON pero más compacto y menos verboso que XML. No es tan común como JSON en APIs, pero es útil en algunos casos.
+
+[source, text]
+----
+id: 123
+nombre: Juan
+email: juan@example.com
+----
+
+=== 5.2 Negotiation de contenido (Content Negotiation)
+
+La negociación de contenido permite al cliente y al servidor acordar el formato de los datos que se intercambiarán. El cliente indica qué formato prefiere a través de la cabecera `Accept`, y el servidor responde con el formato más apropiado.
+
+[source, text]
+----
+GET /api/usuarios/123
+Headers: Accept: application/json
+----
+
+Si el servidor puede devolver los datos en JSON, lo hará. Si no, podría devolver una respuesta en otro formato o con un código de error si el formato solicitado no es compatible.
+
+== 6. Códigos de Estado HTTP
+
+Los códigos de estado HTTP indican el resultado de una solicitud HTTP. Son numéricos y permiten tanto al cliente como al servidor interpretar el estado de la respuesta.
+
+=== 6.1 Introducción a los códigos de estado
+
+Cada código de estado está compuesto por tres dígitos. El primer dígito indica la categoría general del código, mientras que los dos siguientes ofrecen más detalles. Los códigos más comunes en APIs RESTful se encuentran en las categorías 2xx, 3xx, 4xx y 5xx.
+
+=== 6.2 Categorías de códigos de estado: 1xx, 2xx, 3xx, 4xx, 5xx
+
+==== 6.2.1 Códigos de estado 2xx: Éxito
+
+Los códigos 2xx indican que la solicitud fue recibida, entendida y procesada con éxito.
+
+- `200 OK`: La solicitud se completó correctamente.
+- `201 Created`: Un recurso fue creado exitosamente.
+- `204 No Content`: La solicitud se completó con éxito, pero no se devuelve contenido.
+
+[source, text]
+----
+HTTP/1.1 200 OK
+Content-Type: application/json
+Body: { "id": 123, "nombre": "Juan" }
+----
+
+==== 6.2.2 Códigos de estado 3xx: Redirecciones
+
+Los códigos 3xx indican que se requiere una acción adicional por parte del cliente, generalmente para redirigir la solicitud a una nueva URL.
+
+- `301 Moved Permanently`: El recurso ha sido movido de manera permanente a otra URL.
+- `302 Found`: El recurso se encuentra temporalmente en otra URL.
+- `304 Not Modified`: El recurso no ha cambiado desde la última vez que fue solicitado.
+
+[source, text]
+----
+HTTP/1.1 301 Moved Permanently
+Location: https://nueva-url.com/recurso
+----
+
+==== 6.2.3 Códigos de estado 4xx: Errores del cliente
+
+Estos códigos indican que hubo un problema con la solicitud realizada por el cliente.
+
+- `400 Bad Request`: La solicitud está mal formada.
+- `401 Unauthorized`: El cliente no ha proporcionado credenciales válidas.
+- `403 Forbidden`: El cliente no tiene permisos para acceder al recurso.
+- `404 Not Found`: El recurso solicitado no fue encontrado.
+
+[source, text]
+----
+HTTP/1.1 404 Not Found
+Body: { "error": "El recurso no existe" }
+----
+
+==== 6.2.4 Códigos de estado 5xx: Errores del servidor
+
+Los códigos 5xx indican que el servidor encontró un error al procesar la solicitud.
+
+- `500 Internal Server Error`: Error genérico del servidor.
+- `502 Bad Gateway`: El servidor actuó como un gateway o proxy y recibió una respuesta inválida.
+- `503 Service Unavailable`: El servidor no está disponible, usualmente por mantenimiento o sobrecarga.
+
+[source, text]
+----
+HTTP/1.1 500 Internal Server Error
+Body: { "error": "Error interno en el servidor" }
+----
+
+=== 6.3 Códigos comunes en APIs RESTful
+
+En el desarrollo de APIs RESTful, los siguientes códigos son comunes:
+
+- `200 OK`: Solicitudes exitosas.
+- `201 Created`: Recurso creado exitosamente.
+- `204 No Content`: Se realizó una operación exitosa, pero sin cuerpo de respuesta.
+- `400 Bad Request`: Errores de validación o de datos de entrada incorrectos.
+- `401 Unauthorized`: Falta de autenticación o autenticación incorrecta.
+- `403 Forbidden`: Falta de permisos.
+- `404 Not Found`: Recurso no encontrado.
+- `500 Internal Server Error`: Error general en el servidor.
+
+== 7. Autenticación y Seguridad en REST
+
+En las APIs REST, la seguridad y la autenticación son esenciales para proteger los datos y garantizar que solo usuarios autorizados puedan acceder a los recursos. Existen varios métodos y estándares de autenticación.
+
+=== 7.1 Autenticación básica y tokens
+
+La autenticación básica se realiza enviando las credenciales del usuario (nombre de usuario y contraseña) codificadas en Base64 en la cabecera de la solicitud. Sin embargo, este método es considerado inseguro si no se utiliza HTTPS.
+
+[source, text]
+----
+GET /api/recurso
+Headers: Authorization: Basic dXN1YXJpbzpwYXNzd29yZA==
+----
+
+**Tokens:** En lugar de enviar credenciales en cada solicitud, los tokens (ej., API keys) pueden utilizarse para autenticar al usuario. El cliente envía un token en cada solicitud después de autenticarse inicialmente.
+
+[source, text]
+----
+GET /api/recurso
+Headers: Authorization: Bearer {token}
+----
+
+El uso de tokens es más seguro, ya que las credenciales no se exponen constantemente.
+
+=== 7.2 OAuth 2.0
+
+OAuth 2.0 es un protocolo de autorización que permite a los usuarios acceder a recursos protegidos sin necesidad de compartir sus credenciales directamente. Es un estándar utilizado comúnmente para integraciones con servicios de terceros.
+
+Pasos básicos en OAuth 2.0:
+1. El cliente solicita un token de acceso al servidor de autorización.
+2. El servidor emite un token si el cliente está autenticado.
+3. El cliente utiliza el token para acceder a los recursos protegidos.
+
+[source, text]
+----
+POST /oauth/token
+Body: { "grant_type": "client_credentials", "client_id": "{id}", "client_secret": "{secret}" }
+
+Respuesta:
+{
+  "access_token": "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9...",
+  "token_type": "Bearer",
+  "expires_in": 3600
+}
+----
+
+El token de acceso debe ser enviado en cada solicitud para acceder a los recursos.
+
+=== 7.3 Autenticación basada en JWT (JSON Web Tokens)
+
+JWT es un estándar abierto que se utiliza para transmitir información de manera segura entre dos partes. Un token JWT está compuesto por tres partes: encabezado, payload y firma, y se utiliza ampliamente en APIs RESTful para autenticar usuarios y gestionar sesiones.
+
+El flujo general de autenticación con JWT es:
+1. El usuario se autentica enviando sus credenciales.
+2. El servidor genera un JWT firmado y lo envía al cliente.
+3. El cliente incluye el JWT en cada solicitud subsiguiente.
+
+[source, text]
+----
+GET /api/recurso
+Headers: Authorization: Bearer {jwt_token}
+----
+
+JWT es útil porque contiene la información de la sesión y puede ser verificado sin necesidad de consultar una base de datos cada vez.
+
+=== 7.4 Seguridad en transporte (HTTPS)
+
+Para garantizar que los datos intercambiados entre el cliente y el servidor no sean interceptados, es fundamental utilizar HTTPS en lugar de HTTP. HTTPS encripta las solicitudes y respuestas, protegiendo la integridad y confidencialidad de los datos.
+
+[source, text]
+----
+https://api.ejemplo.com/secure/recurso
+----
+
+HTTPS es obligatorio en cualquier API que maneje información sensible, como credenciales de usuario o datos financieros.
+
+== 8. Documentación de APIs REST
+
+La documentación es crucial para que los desarrolladores comprendan cómo interactuar con una API. Una buena documentación debe ser clara, estructurada y contener ejemplos que faciliten la implementación.
+
+=== 8.1 Swagger / OpenAPI
+
+**Swagger** es un conjunto de herramientas que permite a los desarrolladores diseñar, construir, documentar y consumir APIs REST de manera eficiente. **OpenAPI**, anteriormente conocida como la especificación de Swagger, es un estándar que define una manera clara y precisa de describir APIs REST, facilitando tanto el desarrollo como la documentación.
+
+El núcleo de OpenAPI es un archivo que puede estar en formato JSON o YAML, donde se describe toda la API: rutas, métodos, parámetros, tipos de respuestas, códigos de estado, y mucho más. Este archivo puede ser utilizado para generar automáticamente documentación, pruebas y clientes para la API.
+
+[source, yaml]
+----
+openapi: 3.0.0
+info:
+  title: API de Ejemplo
+  description: API para gestionar usuarios.
+  version: 1.0.0
+paths:
+  /usuarios:
+    get:
+      summary: Obtener lista de usuarios
+      responses:
+        '200':
+          description: Lista de usuarios obtenida correctamente
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    id:
+                      type: integer
+                    nombre:
+                      type: string
+                    email:
+                      type: string
+    post:
+      summary: Crear un nuevo usuario
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre:
+                  type: string
+                email:
+                  type: string
+      responses:
+        '201':
+          description: Usuario creado correctamente
+----
+
+==== Apartados de un documento de OpenAPI
+
+Un documento OpenAPI tiene varios apartados clave que describen de manera estructurada los diferentes aspectos de la API. A continuación, se describen los apartados más importantes que suelen estar presentes en un archivo OpenAPI:
+
+===== 1. Información general (Info)
+
+Este apartado proporciona metadatos sobre la API, incluyendo el título, la descripción, la versión y la información de contacto.
+
+[source, yaml]
+----
+info:
+  title: API de Ejemplo
+  description: API para gestionar usuarios y productos.
+  version: 1.0.0
+  contact:
+    name: Soporte Técnico
+    email: soporte@ejemplo.com
+----
+
+===== 2. Servidores (Servers)
+
+Este apartado define los servidores donde la API está disponible. Se puede incluir información sobre entornos de desarrollo, prueba y producción.
+
+[source, yaml]
+----
+servers:
+  - url: https://api.ejemplo.com/v1
+    description: Servidor de producción
+  - url: https://api.dev.ejemplo.com/v1
+    description: Servidor de desarrollo
+----
+
+===== 3. Rutas (Paths)
+
+Las rutas son uno de los componentes más importantes, ya que describen los diferentes endpoints de la API, los métodos HTTP que soportan y las operaciones que se pueden realizar en cada uno.
+
+[source, yaml]
+----
+paths:
+  /usuarios:
+    get:
+      summary: Obtener lista de usuarios
+      responses:
+        '200':
+          description: Lista de usuarios obtenida correctamente
+    post:
+      summary: Crear un nuevo usuario
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                nombre:
+                  type: string
+                email:
+                  type: string
+      responses:
+        '201':
+          description: Usuario creado correctamente
+  /usuarios/{id}:
+    get:
+      summary: Obtener un usuario por ID
+      parameters:
+        - name: id
+          in: path
+          required: true
+          description: ID del usuario
+          schema:
+            type: integer
+      responses:
+        '200':
+          description: Usuario encontrado
+        '404':
+          description: Usuario no encontrado
+----
+
+===== 4. Componentes (Components)
+
+Este apartado permite definir esquemas reutilizables, respuestas, parámetros y otros componentes que pueden ser utilizados en múltiples lugares del documento, evitando la redundancia.
+
+[source, yaml]
+----
+components:
+  schemas:
+    Usuario:
+      type: object
+      properties:
+        id:
+          type: integer
+        nombre:
+          type: string
+        email:
+          type: string
+  responses:
+    UsuarioCreado:
+      description: Usuario creado correctamente
+      content:
+        application/json:
+          schema:
+            $ref: '#/components/schemas/Usuario'
+----
+
+===== 5. Seguridad (Security)
+
+Este apartado define los mecanismos de seguridad que utiliza la API, como autenticación básica, OAuth, JWT, entre otros.
+
+[source, yaml]
+----
+security:
+  - api_key: []
+  
+components:
+  securitySchemes:
+    api_key:
+      type: apiKey
+      in: header
+      name: X-API-Key
+----
+
+===== 6. Ejemplos (Examples)
+
+Se pueden incluir ejemplos de solicitudes y respuestas para ayudar a los desarrolladores a entender cómo interactuar con la API.
+
+[source, yaml]
+----
+paths:
+  /productos:
+    post:
+      summary: Crear un nuevo producto
+      requestBody:
+        content:
+          application/json:
+            examples:
+              productoEjemplo:
+                value:
+                  nombre: "Nuevo Producto"
+                  precio: 100.00
+      responses:
+        '201':
+          description: Producto creado correctamente
+          content:
+            application/json:
+              example:
+                id: 1
+                nombre: "Nuevo Producto"
+                precio: 100.00
+----
+
+Al estructurar el documento OpenAPI de esta manera, se facilita la comprensión, el uso y el mantenimiento de la API, permitiendo a los desarrolladores interactuar con ella de forma efectiva.
+
+
+==== Herramientas basadas en OpenAPI
+
+Swagger proporciona varias herramientas que permiten sacar el máximo provecho de la especificación OpenAPI:
+
+- **Swagger Editor**: Permite diseñar y editar especificaciones OpenAPI en un entorno gráfico interactivo.
+- **Swagger UI**: Genera documentación interactiva basada en el archivo OpenAPI, donde los desarrolladores pueden explorar los endpoints y realizar pruebas en tiempo real.
+- **Swagger Codegen**: Genera clientes y servidores en varios lenguajes de programación a partir de una especificación OpenAPI.
+
+Además, existen otras herramientas como **Redoc** y **Postman** que también pueden utilizar archivos OpenAPI para generar documentación y facilitar el uso de la API.
+
+[source, bash]
+----
+# Generar servidor desde OpenAPI usando Swagger Codegen
+$ swagger-codegen generate -i ./openapi.yaml -l python-flask
+
+# Servir documentación interactiva con Swagger UI
+$ swagger-ui serve ./openapi.yaml
+----
+
+El uso de Swagger y OpenAPI no solo mejora la calidad de la documentación, sino que también facilita la colaboración entre equipos y la integración con otros servicios y herramientas.
+
+
+=== 8.2 Ejemplos de documentación bien estructurada
+
+Una buena documentación de API debe incluir:
+- **Descripción general**: Resumen del propósito de la API y su funcionalidad.
+- **Autenticación**: Explicación clara sobre cómo autenticarse.
+- **Rutas y métodos**: Listado de todas las rutas disponibles y los métodos HTTP soportados.
+- **Ejemplos de solicitudes y respuestas**: Ejemplos de solicitudes con todos los parámetros necesarios y ejemplos de respuestas.
+- **Errores comunes**: Listado de los códigos de error y su significado.
+- **Esquemas de datos**: Explicación de los modelos de datos utilizados en las respuestas.
+
+Ejemplo de buena documentación (en texto):
+
+[source, text]
+----
+# Documentación de API de Usuarios
+
+## GET /usuarios
+**Descripción**: Retorna una lista de usuarios.
+
+**Parámetros**:
+- `page` (opcional): Número de la página.
+
+**Respuesta**:
+- `200 OK`: Lista de usuarios.
+- `404 Not Found`: No se encontraron usuarios.
+
+**Ejemplo**:
+GET /usuarios?page=1
+
+Respuesta:
+{
+  "usuarios": [
+    { "id": 1, "nombre": "Juan" },
+    { "id": 2, "nombre": "Ana" }
+  ]
+}
+----
+
+=== 8.3 Herramientas para generar documentación automática
+
+Existen varias herramientas que permiten generar la documentación de manera automática a partir del código fuente o de un archivo OpenAPI.
+
+- **Swagger UI**: Genera una interfaz web interactiva a partir de un archivo OpenAPI, permitiendo probar las solicitudes directamente desde el navegador.
+- **Postman**: Además de ser una herramienta para probar APIs, Postman también permite generar documentación automática basada en las colecciones de solicitudes que se configuren.
+- **Redoc**: Una herramienta que genera documentación HTML elegante a partir de un archivo OpenAPI.
+- **Slate**: Genera documentación estática y bonita, con ejemplos de solicitudes y respuestas, ideal para incluir en proyectos.
+
+[source, text]
+----
+# Ejemplo de uso de Swagger UI
+$ swagger-ui-cli serve ./openapi.yaml
+
+# Generación de documentación con Postman
+$ postman export-docs --collection ./collection.json
+----
+
+Estas herramientas no solo facilitan la creación de la documentación, sino que también ayudan a mantenerla actualizada de forma automática mientras la API evoluciona.
+
+== 9. Testing de APIs REST
+
+El testing de APIs REST asegura que las funcionalidades de la API se comporten como se espera. Existen métodos tanto manuales como automatizados para verificar las respuestas, errores y la lógica de negocio.
+
+=== 9.1 Pruebas manuales con Postman o curl
+
+**Postman** es una herramienta gráfica que permite realizar solicitudes HTTP de manera manual, facilitando la creación de pruebas y la inspección de las respuestas.
+
+[source, text]
+----
+# Ejemplo de solicitud GET en Postman:
+1. Seleccionar método GET.
+2. Introducir la URL: https://api.ejemplo.com/usuarios
+3. Añadir headers (si es necesario) y ejecutar.
+----
+
+**curl** es una herramienta de línea de comandos que permite hacer solicitudes HTTP, útil para realizar pruebas rápidas desde la terminal.
+
+[source, bash]
+----
+# Ejemplo de curl para obtener usuarios
+curl -X GET https://api.ejemplo.com/usuarios
+
+# Enviar un POST con un cuerpo en JSON
+curl -X POST https://api.ejemplo.com/usuarios -H "Content-Type: application/json" -d '{"nombre": "Juan", "email": "juan@example.com"}'
+----
+
+Estas herramientas son útiles para verificar manualmente el comportamiento de la API.
+
+=== 9.2 Pruebas automatizadas con herramientas como Newman y Pytest
+
+Para automatizar las pruebas y asegurarse de que la API funciona de manera consistente, se pueden utilizar herramientas como **Newman** y **Pytest**.
+
+**Newman** es un CLI para ejecutar colecciones de Postman de manera automatizada. Esto es útil para integrar las pruebas en un pipeline de CI/CD.
+
+[source, bash]
+----
+# Ejecutar colección de Postman con Newman
+$ newman run ./coleccion_postman.json --environment ./entorno.json --reporters cli,html
+----
+
+**Pytest** es una herramienta de pruebas para Python que puede ser usada para crear y ejecutar pruebas de API mediante librerías como `requests` o `httpx`.
+
+[source, python]
+----
+import requests
+
+def test_get_usuarios():
+    url = "https://api.ejemplo.com/usuarios"
+    response = requests.get(url)
+    assert response.status_code == 200
+    assert "usuarios" in response.json()
+
+def test_post_usuario():
+    url = "https://api.ejemplo.com/usuarios"
+    data = {"nombre": "Juan", "email": "juan@example.com"}
+    response = requests.post(url, json=data)
+    assert response.status_code == 201
+----
+
+Estas pruebas automatizadas permiten validar de forma continua que la API esté funcionando correctamente en diferentes escenarios.
+
+=== 9.3 Validación de respuestas y errores comunes
+
+Cuando se realiza testing de APIs, es importante validar tanto las respuestas exitosas como los errores que pueden ocurrir.
+
+- **Validar códigos de estado**: Verificar que las respuestas devuelvan los códigos de estado correctos, como `200 OK` para solicitudes exitosas o `404 Not Found` para recursos que no existen.
+- **Validar el formato de la respuesta**: Comprobar que los datos devueltos estén en el formato esperado (JSON, XML, etc.) y que sigan el esquema correcto.
+- **Validar errores comunes**: Asegurarse de que se manejan adecuadamente los errores como solicitudes mal formadas (`400 Bad Request`), falta de autenticación (`401 Unauthorized`), o recursos no encontrados (`404 Not Found`).
+
+[source, python]
+----
+# Validar respuesta con Pytest
+def test_404_error():
+    url = "https://api.ejemplo.com/usuarios/9999"
+    response = requests.get(url)
+    assert response.status_code == 404
+    assert response.json()["error"] == "Recurso no encontrado"
+----
+
+La validación de errores es crucial para garantizar que la API no solo funcione en condiciones ideales, sino también que maneje adecuadamente los casos excepcionales.
+
+== 10. Buenas Prácticas en el Desarrollo de APIs REST
+
+Desarrollar una API REST de alta calidad implica seguir buenas prácticas que mejoran su rendimiento, escalabilidad y mantenibilidad. A continuación, se presentan algunas de las principales prácticas recomendadas.
+
+=== 10.1 Gestión de errores
+
+Es fundamental que una API REST maneje los errores de manera consistente y clara, proporcionando mensajes de error informativos y códigos de estado HTTP correctos.
+
+- **Usar códigos de estado apropiados**: Por ejemplo, `400 Bad Request` para errores de validación, `401 Unauthorized` para autenticación fallida, `403 Forbidden` para acceso denegado, y `500 Internal Server Error` para fallos del servidor.
+- **Mensajes de error detallados**: Incluir información útil en el cuerpo de la respuesta que permita a los desarrolladores entender el problema.
+
+[source, json]
+----
+{
+  "error": {
+    "code": 400,
+    "message": "El campo 'email' es obligatorio.",
+    "details": [
+      { "field": "email", "issue": "Este campo no puede estar vacío." }
+    ]
+  }
+}
+----
+
+- **Estandarizar los errores**: Usar un formato de error uniforme para todas las respuestas fallidas, facilitando el manejo de errores en el cliente.
+
+=== 10.2 Paginación, filtrado y ordenamiento
+
+Para manejar grandes conjuntos de datos de manera eficiente, es recomendable implementar paginación, filtrado y ordenamiento en las respuestas de la API.
+
+- **Paginación**: Limitar la cantidad de datos devueltos en una sola respuesta, permitiendo al cliente solicitar más mediante parámetros como `page` y `limit`.
+
+[source, text]
+----
+GET /usuarios?page=2&limit=50
+----
+
+- **Filtrado**: Permitir que el cliente filtre los resultados según ciertos parámetros, como fechas o campos específicos.
+
+[source, text]
+----
+GET /usuarios?nombre=Juan&fecha_registro=2023-01-01
+----
+
+- **Ordenamiento**: Proveer la opción de ordenar los resultados por campos específicos, ya sea de manera ascendente o descendente.
+
+[source, text]
+----
+GET /usuarios?sort=fecha_registro&order=desc
+----
+
+=== 10.3 Optimización del rendimiento
+
+Para mejorar el rendimiento de una API REST, se pueden implementar diversas estrategias:
+
+- **Cacheo**: Usar cabeceras HTTP como `Cache-Control` y `ETag` para indicar al cliente cuándo puede reutilizar una respuesta anterior y cuándo debe solicitar una nueva.
+
+[source, text]
+----
+GET /productos
+Headers:
+  Cache-Control: max-age=3600
+  ETag: "5d41402abc4b2a76b9719d911017c592"
+----
+
+- **Compresión de respuestas**: Comprimir las respuestas grandes utilizando `gzip` o `deflate` para reducir el tamaño de los datos transmitidos.
+
+[source, text]
+----
+GET /productos
+Headers: Accept-Encoding: gzip
+----
+
+- **Minimizar las consultas a la base de datos**: Optimizar las consultas y evitar consultas innecesarias a la base de datos utilizando técnicas como el cacheo o la carga diferida.
+
+=== 10.4 Monitorización y logs
+
+La monitorización y los logs son esenciales para mantener una API y diagnosticar problemas.
+
+- **Logs detallados**: Registrar todas las solicitudes, errores y eventos importantes. Asegúrate de no registrar información sensible (como contraseñas).
+
+[source, text]
+----
+{
+  "timestamp": "2024-10-20T12:34:56Z",
+  "method": "GET",
+  "url": "/usuarios/123",
+  "status": 200,
+  "response_time": "150ms"
+}
+----
+
+- **Monitorización**: Implementar herramientas de monitorización para rastrear el rendimiento de la API (como tiempos de respuesta, tasas de error y tráfico).
+
+Herramientas como **Prometheus**, **Grafana**, o **Elastic Stack** permiten visualizar y analizar métricas de la API en tiempo real.
+
+- **Alertas**: Configurar alertas automáticas que notifiquen a los desarrolladores cuando ocurren errores graves o cuando el rendimiento de la API cae por debajo de cierto umbral.
+
+[source, text]
+----
+Alerta: "Tasa de error superior al 5% en las últimas 10 min"
+----
+
+== 11. Ejemplo Práctico: Construcción de una API REST
+=== 11.1 Diseño de una API RESTful desde cero
+=== 11.2 Implementación en un lenguaje de programación (Python/Flask, Node.js/Express, etc.)
+=== 11.3 Pruebas y despliegue
+
+== 12. Futuro y Tendencias en APIs
+
+El desarrollo de APIs está evolucionando rápidamente, con nuevos enfoques que complementan y, en algunos casos, reemplazan a REST. A continuación, se exploran algunas de las tendencias más importantes en el futuro de las APIs.
+
+=== 12.1 GraphQL vs REST
+
+**GraphQL** es un lenguaje de consulta de datos desarrollado por Facebook que ofrece una alternativa a REST, permitiendo a los clientes especificar exactamente qué datos necesitan en una única solicitud.
+
+- **Ventajas de GraphQL**:
+  - Permite solicitar solo los datos necesarios, reduciendo el tamaño de la respuesta.
+  - Elimina el problema de "over-fetching" (recibir más datos de los necesarios) y "under-fetching" (necesitar hacer varias solicitudes para obtener los datos deseados).
+  - Agrupa múltiples consultas en una única solicitud, lo que puede optimizar el rendimiento en algunas situaciones.
+
+[source, text]
+----
+POST /graphql
+Body: 
+{
+  "query": "{ usuarios { id, nombre, email } }"
+}
+----
+
+- **Desventajas de GraphQL**:
+  - La curva de aprendizaje puede ser más alta.
+  - Requiere un servidor dedicado a procesar las consultas, lo que puede complicar la implementación.
+  - Algunas aplicaciones de GraphQL pueden resultar en un mayor uso de recursos del servidor.
+
+**REST**, por otro lado, sigue siendo una opción sólida y ampliamente utilizada, especialmente cuando se necesita simplicidad y robustez. Aún es la elección predeterminada para muchas APIs públicas.
+
+=== 12.2 gRPC y otros enfoques
+
+**gRPC** es un sistema de llamadas a procedimientos remotos (RPC) desarrollado por Google que utiliza el protocolo HTTP/2 y permite la comunicación entre servicios en diferentes lenguajes.
+
+- **Ventajas de gRPC**:
+  - Utiliza HTTP/2, lo que permite la multiplexación de solicitudes y respuestas, mejorando la eficiencia de la comunicación.
+  - Soporta transmisión bidireccional en tiempo real, útil para aplicaciones de tiempo real.
+  - El uso de Protobuf (Protocol Buffers) para la serialización de mensajes hace que sea más eficiente en términos de tamaño de mensajes y velocidad de transmisión.
+
+[source, text]
+----
+# Ejemplo de definición en gRPC usando Protobuf
+service UsuarioService {
+  rpc ObtenerUsuarios (SolicitudUsuarios) returns (RespuestaUsuarios);
+}
+
+message SolicitudUsuarios {
+  int32 page = 1;
+}
+
+message RespuestaUsuarios {
+  repeated Usuario usuarios = 1;
+}
+
+message Usuario {
+  int32 id = 1;
+  string nombre = 2;
+  string email = 3;
+}
+----
+
+- **Desventajas de gRPC**:
+  - Es más complejo de configurar que REST, especialmente en términos de configuración y generación de código para diferentes lenguajes.
+  - Puede no ser adecuado para APIs abiertas o para consumir en navegadores, ya que gRPC está más orientado a servicios internos y microservicios.
+
+Otros enfoques como **WebSockets** y **Server-Sent Events (SSE)** también están ganando popularidad para aplicaciones que requieren comunicación en tiempo real.
+
+=== 12.3 REST en la era de microservicios
+
+En la era de los microservicios, REST sigue siendo uno de los protocolos más utilizados debido a su simplicidad y flexibilidad. Sin embargo, algunos desafíos deben ser abordados en entornos de microservicios:
+
+- **Desacoplamiento**: Los microservicios deben estar lo más desacoplados posible para ser escalables y mantenibles. REST ayuda a mantener la independencia de los servicios mediante la comunicación a través de HTTP.
+- **Tolerancia a fallos**: En un entorno distribuido, los microservicios deben ser resilientes ante fallos. Implementar mecanismos como **circuit breakers**, **reintentos** y **timeout** es clave para evitar que los fallos de un servicio afecten a todo el sistema.
+- **Tráfico y latencia**: A medida que los microservicios se comunican entre sí, REST puede introducir latencias debido a la cantidad de solicitudes HTTP. En estos casos, gRPC o GraphQL podrían ser opciones más eficientes.
+
+=== 12.4 Buenas prácticas y recomendaciones RESTful
+
+A pesar de las nuevas tendencias, REST sigue siendo muy relevante y puede beneficiarse de ciertas buenas prácticas para mejorar su rendimiento y escalabilidad:
+
+- **Estandarización de la API**: Utilizar convenciones claras en los endpoints, como el uso de sustantivos para las rutas (`/usuarios`, `/productos`) y el uso adecuado de los métodos HTTP.
+- **Versionado**: Asegurarse de versionar la API para manejar cambios sin interrumpir a los clientes existentes. El versionado puede implementarse en la URL (`/v1/usuarios`) o mediante headers (`Accept: application/vnd.api+json; version=1`).
+- **Seguridad**: Implementar HTTPS para todas las solicitudes, así como controles de acceso mediante tokens JWT o OAuth.
+- **Optimización del rendimiento**: Utilizar cacheo, compresión de respuestas y minimizar el tamaño de los datos transferidos.
+- **Documentación clara**: Usar herramientas como OpenAPI/Swagger para mantener la documentación actualizada y accesible.
+  
+Seguir estas prácticas garantiza que las APIs REST sigan siendo robustas, escalables y fáciles de mantener en el futuro.

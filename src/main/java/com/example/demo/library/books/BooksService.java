@@ -1,6 +1,7 @@
 package com.example.demo.library.books;
 
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.StreamSupport;
@@ -57,7 +58,7 @@ public class BooksService {
             bookEntities = this.booksRespository.findByAuthorContainingIgnoreCaseAndPagesBetween(author, pagesGT, pagesLT);
             return this.getBookDtos(bookEntities);
         }
-        BookEntity bookEntity = this.booksRespository.findByAuthorAndTitleIgnoreCaseAndPagesBetween(author, title, pagesGT, pagesLT);
+        BookEntity bookEntity = this.booksRespository.findByAuthorContainingIgnoreCaseAndTitleContainingIgnoreCaseAndPagesBetween(author, title, pagesGT, pagesLT);
         // create a list of bookEntities
         ArrayList<BookEntity> bookEntitiesList = new ArrayList<BookEntity>();
         bookEntitiesList.add(bookEntity);
