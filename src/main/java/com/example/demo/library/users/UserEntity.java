@@ -2,9 +2,15 @@ package com.example.demo.library.users;
 
 import org.hibernate.validator.constraints.Length;
 
+import com.example.demo.library.lends.LendEntity;
+
+import java.util.List;
+
 import jakarta.annotation.Generated;
 import jakarta.persistence.Column;
+import jakarta.persistence.Embedded;
 import jakarta.persistence.Entity;
+import jakarta.persistence.OneToMany;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -33,4 +39,10 @@ public class UserEntity {
     private String email;
 
     private int age;
+
+    @Embedded
+    private Address address;
+
+    @OneToMany(mappedBy = "user")
+    private List<LendEntity> lends;
 }

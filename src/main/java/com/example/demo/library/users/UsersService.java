@@ -100,6 +100,17 @@ public class UsersService {
         return this.userEntityDto(userEntityById.get());
     }
 
+    public IUsersResponse getUserById(long id) {
+        Optional<UserEntity> userEntityById = libraryUsersRepository.findById(id);
+        if (!userEntityById.isPresent()) {
+            return UserErrorDto.builder()
+                    .message("User not found")
+                    .status(404)
+                    .build();
+        }
+        return userEntityDto(userEntityById.get());
+    }
+
     List<IUsersResponse> userEntitiesToDtos (List<UserEntity> userEntities) {
         return userEntities.stream().map(userEntity -> UserDto.builder()
                 .id(userEntity.getId())

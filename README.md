@@ -12,7 +12,7 @@ mvn test
 
 ### Build the application
 ```shell
-mvn package
+mvn clean package
 ```
 
 ### Build the Docker image from Dockerfile

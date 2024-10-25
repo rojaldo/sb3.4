@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.JpaRepository;
 public interface LibraryUsersRepository extends JpaRepository<UserEntity, Long> {
     
     UserEntity findByName(String name);
+    UserEntity getUserById(long id);
     
     Optional<UserEntity> findByEmail(String email);
     
