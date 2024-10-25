@@ -1,16 +1,17 @@
 services:
-  web:
+  api:
     build: .
     ports:
       - "8080:8080"
     depends_on:
-      - db
+      - database
     restart: on-failure
     networks:
       - mynet
-    
-  db:
-    image: postgres
+  database:
+    image: postgres:13.16-bookworm
+    ports:
+      - "5432:5432"
     networks:
       - mynet
     environment:

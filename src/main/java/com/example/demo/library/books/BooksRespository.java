@@ -15,6 +15,6 @@ public interface BooksRespository extends JpaRepository<BookEntity, Long> {
     List<BookEntity> findByAuthorContainingIgnoreCase(String author);
     List<BookEntity> findByAuthorContainingIgnoreCaseAndPagesBetween(String author, int pagesGT, int pagesLT);
     BookEntity findByAuthorAndTitleIgnoreCase(String author, String title);
-    BookEntity findByAuthorAndTitleIgnoreCaseAndPagesBetween(String author, String title, int pagesGT, int pagesLT);
+    BookEntity findByAuthorContainingIgnoreCaseAndTitleContainingIgnoreCaseAndPagesBetween(String author, String title, int pagesGT, int pagesLT);
 
 }

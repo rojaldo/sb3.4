@@ -17,7 +17,7 @@ public class DemoApplication {
 	@Bean
 	public CommandLineRunner commandLineRunner(BooksService booksService) {
 		return args -> {
-			booksService.initBooks();
+			// booksService.initBooks();
 		};
 	}
 

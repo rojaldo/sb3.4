@@ -553,6 +553,3 @@ components:
           type: integer
           format: int32
           example: 404
-        
-    
-
